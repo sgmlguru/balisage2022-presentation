@@ -204,7 +204,7 @@
 				<!-- DB 4.3 to HTML -->
 				<section>
 					<section>
-						<h3>DocBook to HTML</h3>
+						<h3>DocBook to HTM PreprocessingL</h3>
 					</section>
 					
 					<section>
@@ -255,9 +255,9 @@
 					</section>
 					
 					<section>
-						<h5>Pre-converting</h5>
+						<h5>Preconverting</h5>
 						
-						<!-- Turns out it's sometimes easier to pre-convert -->
+						<!-- Turns out it's sometimes easier to preconvert -->
 						<!-- Some QA constructs requiring metadata alongside multiple-answer lists -->
 						<!-- Insert processing attr keep=true (current node but not descendants) -->
 						<!-- keep=copy (current node AND descendants) -->
@@ -267,6 +267,48 @@
 						<h5>For example...</h5>
 						
 						<!-- Examples where pre-convert makes sense -->
+					</section>
+					
+					<section>
+						<h5>Output</h5>
+						
+						<!-- The preprocessing XSLT manifest's output is a normalised DocBook-ish file -->
+						<!-- That is split into fragments based on the initial preprocessing -->
+						<!-- Fragments were also named during preprocessing (extra attrs) -->
+					</section>
+				</section>
+				
+				
+				<!-- xslTNG -->
+				<section>
+					<section>
+						<h3>xslTNG</h3>
+					</section>
+					
+					<section>
+						<h5>In Theory</h5>
+						
+						<!-- Create an entry XSLT and link to docbook.xsl -->
+						<!-- Do your tweaks in the entry module -->
+						<!-- Run against the split output -->
+					</section>
+					
+					<section>
+						<h5>In Practice</h5>
+						
+						<!-- DB 4.3 doesn't live in a namespace but the expected xslTNG input does -->
+						<!-- xslTNG produces a default output -->
+						<!-- It's endlessly customisable (easily, too), but not always obviously so -->
+						<!-- Hence more and more preconverting -->
+					</section>
+					
+					<section>
+						<h5>But Also</h5>
+						
+						<!-- Post-xslTNG files needed a few tweaks -->
+						<!-- HTML wrappers sometimes went missing and I couldn't understand why -->
+						<!-- Easier to do a combination of preconverting and postprocessing -->
+						<!-- Various late-breaking reqs from client easier to do in postprocess -->
 					</section>
 				</section>
 				
