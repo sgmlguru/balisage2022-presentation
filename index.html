@@ -82,6 +82,19 @@
 					</section>
 					
 					<section>
+						<h5>Pipelines?</h5>
+						
+						<!-- XSLT manifest example -->
+						
+						<aside class="notes">
+							<p>XSLTs run in sequence, output from 1 input to 2, etc</p>
+							<p>They all do ONE thing</p>
+							<p>Interested parties, see Balisage 2020 paper</p>
+							<p>XProc 3.0 implementation out now!</p>
+						</aside>
+					</section>
+					
+					<section>
 						<h5>Again, Easy. Right?</h5>
 					</section>
 					
@@ -147,16 +160,113 @@
 					</section>
 					
 					<section>
-						<h5>Remember Those XIncludes?</h5>
+						<h5>Remember Those XIncludes</h5>
 						
 						<!-- Code examples with outcommented DOCTYPEs -->
+						
 						<pre class="xml">
 							<code data-trim data-noescape></code>
 						</pre>
+						
+						<pre class="xml">
+							<code data-trim data-noescape></code>
+						</pre>
+						
+						<aside class="notes">
+							<p>Can't do the ID transform without DOCTYPE</p>
+							<p>Multiple variants</p>
+							<p>Regexes not feasible</p>
+						</aside>
 					</section>
 					
 					<section>
-						<h5></h5>
+						<h5>Tagsoup</h5>
+						
+						<!-- What it does -->
+						<!-- Adds custom DOCTYPE (and html namespace, but that's easy to fix) -->
+						<!-- Plus introduced Ant -->
+					</section>
+					
+					<section>
+						<h5>Except</h5>
+						
+						<!-- The client said that I don't have to normalise XIncludes here -->
+						
+						<aside class="notes">
+							<p></p>
+						</aside>
+					</section>
+					
+					<!-- Need more on cleanup? Maybe mention of other fixes? -->
+				</section>
+				
+				
+				<!-- DB 4.3 to HTML -->
+				<section>
+					<section>
+						<h3>DocBook to HTML</h3>
+					</section>
+					
+					<section>
+						<h5>Initial Game Plan</h5>
+						
+						<!-- XProc pipeline to do initial fixes (i.e. metadata) and run OTB DB to HTML -->
+						<!-- Use DB XSLT 1.0 package? No fun! -->
+						<!-- xslTNG new and exciting, plus XSLT 3.0 -->
+						<!-- How hard can it be? -->
+					</section>
+					
+					<section>
+						<h5>Remember Those XIncludes, Pt 2</h5>
+						
+						<!-- Due to different reqs depending on book type, different metadata usage -->
+						<!-- No way to find out proper context when processing XInclude fragments -->
+						<!-- We have to normalise after all -->
+					</section>
+					
+					<section>
+						<h5>Breaking Up Is Never Easy</h5>
+						
+						<!-- Turns out the 4.0 XI fragments weren't always correct -->
+						<!-- Normalise, then insert split markup (split=true) -->
+						<!-- Context and book type decide split, not just element -->
+						
+						<aside class="notes">
+							<p>This eventually became four XSLT steps</p>
+							<p>Hack: book type determined by (part of) folder name</p>
+						</aside>
+					</section>
+					
+					<section>
+						<h5>Metadata Inserts</h5>
+						
+						<!-- Examples of metadata in context (multiple slides?) -->
+						<!-- BUT: metadata insert depended on context (split, type of book) -->
+						<!-- 7 steps dealt with metadata -->
+					</section>
+					
+					<section>
+						<h5>Various Tweaks</h5>
+						
+						<!-- Footnotes -->
+						<!-- xref labels -->
+						<!-- Some grouping -->
+						<!-- But also... -->
+					</section>
+					
+					<section>
+						<h5>Pre-converting</h5>
+						
+						<!-- Turns out it's sometimes easier to pre-convert -->
+						<!-- Some QA constructs requiring metadata alongside multiple-answer lists -->
+						<!-- Insert processing attr keep=true (current node but not descendants) -->
+						<!-- keep=copy (current node AND descendants) -->
+					</section>
+					
+					<section>
+						<h5>For example...</h5>
+						
+						<!-- Examples where pre-convert makes sense -->
 					</section>
 				</section>
 				
@@ -176,12 +286,6 @@
 					
 					
 				</section>
-				
-				
-				
-				
-				
-				
 				
 				
 				
