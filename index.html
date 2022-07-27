@@ -78,6 +78,7 @@
 						<ul>
 							<li>Pass through (a lot of) Math ML</li>
 							<li>Insert metadata for publishing</li>
+							<li>Oh, and an HTML conversion</li>
 						</ul>
 					</section>
 					
@@ -85,6 +86,29 @@
 						<h5>Pipelines?</h5>
 						
 						<!-- XSLT manifest example -->
+						<pre class="xml">
+							<code data-trim data-noescape><?xml version="1.0" encoding="UTF-8"?>
+&lt;manifest
+    xmlns=&quot;http://www.corbas.co.uk/ns/transforms/manifest&quot;
+    xml:base=&quot;.&quot;&gt;
+    
+    &lt;group
+        description=&quot;An example XSLT pipeline manifest&quot;
+        xml:base=&quot;../xslt/&quot;&gt;
+        &lt;item href=&quot;step1.xsl&quot; description=&quot;To element one&quot;&gt;
+            &lt;meta name=&quot;param1&quot; value=&quot;value1&quot;/&gt;
+        &lt;/item&gt;
+        &lt;item href=&quot;step2.xsl&quot; description=&quot;To element two&quot;/&gt;
+        &lt;item href=&quot;step3.xsl&quot; description=&quot;To element three&quot;&gt;
+            &lt;meta name=&quot;param3A&quot; value=&quot;value3A&quot;/&gt;
+            &lt;meta name=&quot;param3B&quot; value=&quot;value3B&quot;/&gt;
+        &lt;/item&gt;
+        &lt;item href=&quot;step4.xsl&quot; description=&quot;To element four&quot;/&gt;
+    &lt;/group&gt;
+    
+&lt;/manifest&gt;
+</code>
+						</pre>
 						
 						<aside class="notes">
 							<p>XSLTs run in sequence, output from 1 input to 2, etc</p>
@@ -109,22 +133,54 @@
 					<section>
 						<h5>Game Plan</h5>
 						
-						<!-- Normalise -->
-						<!-- Tweak -->
-						<!-- Encoding -->
+						<ol>
+							<li class="fragment">Normalise</li>
+							<li class="fragment">Tweak</li>
+							<li class="fragment">Encode</li>
+						</ol>
+						
+						<aside class="notes">
+							<p>The content is in fragments, remember?</p>
+							<p>Some minor tweaks as listed by the client</p>
+							<p>4.0 to 4.3 is really just a new DOCTYPE</p>
+							<p>We need UTF-8</p>
+						</aside>
 					</section>
 					
 					<section>
 						<h5>Normalisation</h5>
 						
+						<p>Pull in all <code>XInclude</code> links</p>
+						<pre class="xml">
+							<code data-trim data-noescape>&lt;xi:include href="section1.xml"/></code>
+						</pre>
+						
+						<p>List XInclude targets in an exclude filter:</p>
+						<pre class="xml">
+							<code data-trim data-noescape>&lt;p:option
+    name=&quot;exclude-filter&quot;
+    select=&quot;&apos;(section1.xml|section2.xml|section3.xml)&apos;&quot;/&gt;</code>
+						</pre>
+						
 						<!-- Pull in XInclude targets -->
 						<!-- List all XInclude targets -->
 						<!-- Add those to exclude filter (to not process them once pulled in) -->
 						<!-- Here's where I spotted the first issue -->
+						
+						<aside class="notes">
+							<p>exclude-filter to not continue processing normalised XInclude fragments</p>
+							<p>And here was the first issue</p>
+						</aside>
 					</section>
 					
 					<section>
 						<h5>Windchill File Protocol</h5>
+						
+						<pre class="xml">
+							<code data-trim data-noescape>x-wc://file=0000079863.xml</code>
+						</pre>
+						
+						<p>Easy enough to fix, but then I discovered <em>why</em></p>
 						
 						<!-- Properietary file protocol -->
 						<!-- Easy enough to fix, but then I discovered WHY -->
@@ -133,25 +189,71 @@
 					<section>
 						<h5>File Naming</h5>
 						
+						<pre class="xml">
+							<code data-trim data-noescape>01234.xml
+My filename.xml
+Multiple   whitespaces  in filenames.xml
+Ampersands? Yes & No.xml
+Square brackets [2].xml
+...</code>
+						</pre>
+						
+						<p class="fragment">Exclude filters are <em>regular expressions</em></p>
+						
 						<!-- Files actually used ANY characters, including... -->
 						<!-- Multiple spaces -->
 						<!-- Ampersands -->
 						<!-- Square brackets... -->
 						<!-- Exclude Filters Are Regular Expressions! -->
+						
+						<aside class="notes">
+							<p>The protocol is to allow ANY filenames</p>
+							<p>When doing a burst, the system uses the fragment title name</p>
+						</aside>
 					</section>
 					
 					<section>
 						<h5>File Renaming Step</h5>
+						
+						<pre class="xml">
+							<code data-trim data-noescape>&lt;sg:rename name=&quot;rename&quot;&gt;
+    &lt;p:with-option name=&quot;input-dir&quot; select=&quot;$input-base-uri&quot;/&gt;
+    &lt;p:with-option name=&quot;output-dir&quot; select=&quot;concat($tmp-dir,&apos;/names-fixed&apos;)&quot;/&gt;
+    &lt;p:with-option name=&quot;reports-dir&quot; select=&quot;$reports-dir&quot;/&gt;
+    &lt;p:with-option name=&quot;tmp-dir&quot; select=&quot;$tmp-dir&quot;/&gt;
+&lt;/sg:rename&gt;</code>
+						</pre>
+						
+						<ul>
+							<li class="fragment">Rename files</li>
+							<li class="fragment">Rename XInclude hrefs</li>
+						</ul>
 						
 						<!-- Filenames can be fixed... -->
 						<!-- ...but then the hrefs to them also must be! -->
 						<!-- XProc step for reliable file renaming for both files and hrefs -->
 						
 						<!-- Figure: tree command output for the renaming step before/after folders? -->
+						
+						<aside class="notes">
+							<p>Renaming the easier option</p>
+							<p>The key is reliability</p>
+						</aside>
 					</section>
 					
 					<section>
 						<h5>Unicode and UTF-8</h5>
+						
+						<p>All we need is...</p>
+						<pre class="xml">
+							<code data-trim data-noescape>&lt;xsl:output method="xml" indent="yes" encoding="UTF-8"/></code>
+						</pre>
+						
+						<p>Provided we have...</p>
+						<pre class="xml">
+							<code data-trim data-noescape>&lt;!DOCTYPE set PUBLIC &quot;-//Arbortext//DTD DocBook XML V4.0 + MathML//EN&quot;
+ &quot;axdocbook_math.dtd&quot;&gt;</code>
+						</pre>
 						
 						<!-- All we need is an ID transform serialised as UTF-8 -->
 						<!-- Provided we have all the character entiry declarations -->
@@ -165,12 +267,22 @@
 						<!-- Code examples with outcommented DOCTYPEs -->
 						
 						<pre class="xml">
-							<code data-trim data-noescape></code>
+							<code data-trim data-noescape>&lt;!-- Fragment document type declaration subset:
+Arbortext, Inc., 1988-2017, v.4002
+&lt;!DOCTYPE set PUBLIC &quot;-//Arbortext//DTD DocBook XML V4.0 + MathML//EN&quot;
+ &quot;axdocbook_math.dtd&quot;&gt;
+--&gt;
+&lt;?Pub EntList alpha bull copy rArr sect trade ordm ohm mu j0 omega
+eacute?&gt;
+&lt;?Pub Inc?&gt;
+&lt;section id=&quot;sectionFEBB4816&quot; vendor=&quot;0000081446&quot;&gt;
+    ...
+&lt;/section&gt;</code>
 						</pre>
 						
-						<pre class="xml">
+						<!--<pre class="xml">
 							<code data-trim data-noescape></code>
-						</pre>
+						</pre>-->
 						
 						<aside class="notes">
 							<p>Can't do the ID transform without DOCTYPE</p>
@@ -180,11 +292,35 @@
 					</section>
 					
 					<section>
-						<h5>Tagsoup</h5>
+						<h5>TagSoup</h5>
+						
+						<img src="img/tagsoup-homepage.png" alt="Tagsoup homepage" style="width: 50%"/>
 						
 						<!-- What it does -->
 						<!-- Adds custom DOCTYPE (and html namespace, but that's easy to fix) -->
 						<!-- Plus introduced Ant -->
+					</section>
+					
+					<section>
+						<h5>Add DOCTYPE</h5>
+						
+						<pre class="xml">
+							<code data-trim data-noescape>&lt;java
+    jar=&quot;lib/tagsoup-1.2.1.jar&quot;
+    fork=&quot;true&quot;
+    output=&quot;${base.intermediate}/${local.path}&quot;
+    error=&quot;${base.reports}/err.txt&quot;&gt;
+    &lt;arg value=&quot;--doctype-public=-//Arbortext//DTD DocBook XML V4.0 + MathML//EN&quot;/&gt;
+    &lt;arg value=&quot;--doctype-system=axdocbook_math.dtd&quot;/&gt;
+    &lt;arg value=&quot;--lexical&quot;/&gt;
+    &lt;arg value=&quot;${local.file}&quot;/&gt;
+&lt;/java&gt;</code>
+						</pre>
+						
+						<aside class="notes">
+							<p>Add custom DOCTYPE</p>
+							<p>TagSoup foced me to add Ant on top of XProc</p>
+						</aside>
 					</section>
 					
 					<section>
@@ -193,7 +329,7 @@
 						<!-- The client said that I don't have to normalise XIncludes here -->
 						
 						<aside class="notes">
-							<p></p>
+							<p>Client: no need to normalise XIncludes here</p>
 						</aside>
 					</section>
 					
