@@ -340,49 +340,214 @@ eacute?&gt;
 				<!-- DB 4.3 to HTML -->
 				<section>
 					<section>
-						<h3>DocBook to HTM PreprocessingL</h3>
+						<h3>DocBook to HTML &amp; Preprocessing</h3>
 					</section>
 					
 					<section>
 						<h5>Initial Game Plan</h5>
 						
-						<!-- XProc pipeline to do initial fixes (i.e. metadata) and run OTB DB to HTML -->
-						<!-- Use DB XSLT 1.0 package? No fun! -->
-						<!-- xslTNG new and exciting, plus XSLT 3.0 -->
-						<!-- How hard can it be? -->
+						<ol>
+							<li class="fragment">Preprocess</li>
+							<li class="fragment">Insert metadata</li>
+							<li class="fragment">Run (tweaked) OOTB DocBook to HTML</li>
+						</ol>
+						
+						<p class="fragment">How hard can it be?</p>
+						
+						<aside class="notes">
+							<p>XProc (XSLT manifest) initial fixes and metadata</p>
+							<p>DB to HTML with XSLT 1.0 - no fun</p>
+							<p>xslTNG - new and exciting + XSLT 3.0</p>
+						</aside>
 					</section>
 					
 					<section>
 						<h5>Remember Those XIncludes, Pt 2</h5>
 						
+						<ul>
+							<li class="fragment">Metadata inserts depend on book type</li>
+							<li class="fragment">Different book types => files split differently</li>
+							<li class="fragment">No way to find out context in a fragment - need the whole book</li>
+							<li class="fragment">Also: the source fragments were not always correctly split!</li>
+						</ul>
+						
+						
+						<p class="fragment">We need to normalise after all!</p>
+						
 						<!-- Due to different reqs depending on book type, different metadata usage -->
 						<!-- No way to find out proper context when processing XInclude fragments -->
 						<!-- We have to normalise after all -->
+						<aside class="notes">
+							<p>Ref manuals - metadata</p>
+							<p>Diagnostic tests - no metadata</p>
+							<p>Type of book decides splits and metadata</p>
+						</aside>
 					</section>
 					
 					<section>
 						<h5>Breaking Up Is Never Easy</h5>
 						
-						<!-- Turns out the 4.0 XI fragments weren't always correct -->
-						<!-- Normalise, then insert split markup (split=true) -->
-						<!-- Context and book type decide split, not just element -->
+						<p>New game plan:</p>
+						
+						<ol>
+							<li class="fragment">Normalise</li>
+							<li class="fragment">Determine where to split (insert <code>split=&quot;true&quot;</code>) - depends on book type and context</li>
+							<li class="fragment">Calculate fragment filenames - depends on book type and context</li>
+							<li class="fragment">Preprocess and insert metadata</li>
+							<li class="fragment">Run (tweaked) OOTB DocBook to HTML</li>
+						</ol>
 						
 						<aside class="notes">
+							<p>Context and book type decide split, not just element</p>
 							<p>This eventually became four XSLT steps</p>
 							<p>Hack: book type determined by (part of) folder name</p>
 						</aside>
 					</section>
 					
 					<section>
-						<h5>Metadata Inserts</h5>
+						<h5>Assessment Metadata</h5>
 						
-						<!-- Examples of metadata in context (multiple slides?) -->
-						<!-- BUT: metadata insert depended on context (split, type of book) -->
-						<!-- 7 steps dealt with metadata -->
+						<pre class="xml stretch" style="font-size: 18pt">
+							<code data-trim data-noescape>&lt;qandaentry split=&quot;true&quot; type=&quot;assessment&quot;&gt;
+    &lt;xhtml:section class=&quot;ktp-question-meta&quot;&gt;
+        &lt;xhtml:section
+            property=&quot;ktp:metadata&quot;
+            class=&quot;ktp-meta&quot;&gt;
+            &lt;xhtml:span
+                property=&quot;atom:content-item-name&quot;
+                class=&quot;ktp-meta&quot;
+                data-value=&quot;0000088017&quot;/&gt;
+        &lt;/xhtml:section&gt;
+        &lt;xhtml:section
+            property=&quot;ktp:tags&quot;
+            class=&quot;ktp-meta&quot;&gt;
+            &lt;xhtml:span
+                property=&quot;ktp:interactionType&quot;
+                class=&quot;ktp-meta&quot;&gt;single-select&lt;/xhtml:span&gt;
+        &lt;/xhtml:section&gt;
+    &lt;/xhtml:section&gt;
+    ...
+&lt;/qandaentry&gt;</code>
+						</pre>
+						
+						<aside class="notes">
+							<p>The metadata inserts are XHTML things that the system expects</p>
+							<p>Easiest to add them in an XSLT pipeline</p>
+							<p>If they are inserted depends on context and type of book</p>
+						</aside>
+					</section>
+					
+					<section>
+						<h5>Webbook (Chapter) Metadata</h5>
+						
+						<pre class="xml stretch" style="font-size: 13pt">
+							<code data-trim data-noescape>&lt;chapter label=&quot;42&quot; vendor=&quot;0000088016&quot;&gt;
+    &lt;title&gt;Fasteners&lt;/title&gt;
+    &lt;xhtml:section class=&quot;ktp-document-meta&quot; keep=&quot;copy&quot;&gt;
+        &lt;xhtml:section property=&quot;ktp:metadata&quot; class=&quot;ktp-meta&quot;&gt;
+            &lt;xhtml:span
+                property=&quot;atom:content-item-name&quot;
+                class=&quot;ktp-meta&quot;
+                data-value=&quot;0000088016&quot;&gt;&lt;/xhtml:span&gt;
+            &lt;xhtml:span property=&quot;atom:title&quot;&gt;
+                &lt;xhtml:span class=&quot;chapter-number&quot;&gt;42&lt;/xhtml:span&gt;
+                &lt;xhtml:span&gt;Fasteners&lt;/xhtml:span&gt;
+            &lt;/xhtml:span&gt; 
+        &lt;/xhtml:section&gt;
+        &lt;xhtml:section property=&quot;ktp:tags&quot; class=&quot;ktp-meta&quot;&gt;
+            &lt;xhtml:span property=&quot;atom:tag&quot; class=&quot;ktp-meta&quot;&gt;ppi&lt;/xhtml:span&gt;
+            &lt;xhtml:span property=&quot;atom:tag&quot; class=&quot;ktp-meta&quot;&gt;remediation&lt;/xhtml:span&gt;
+            &lt;xhtml:span property=&quot;atom:tag&quot; class=&quot;ktp-meta&quot;&gt;not_scorable&lt;/xhtml:span&gt;
+            &lt;xhtml:span property=&quot;atom:tag&quot; class=&quot;ktp-meta&quot;&gt;resource&lt;/xhtml:span&gt;
+            &lt;xhtml:span property=&quot;atom:tag&quot; class=&quot;ktp-meta&quot;&gt;article&lt;/xhtml:span&gt;
+        &lt;/xhtml:section&gt;
+    &lt;/xhtml:section&gt;
+    &lt;xhtml:section property=&quot;ktp:document-section&quot;
+        typeof=&quot;ktp:instruction&quot;
+        class=&quot;ktp-document-section&quot;
+        data-title=&quot;Fasteners&quot;&gt;
+        ...
+    &lt;/xhtml:section&gt;
+&lt;/chapter&gt;</code>
+						</pre>
+						
+						<aside class="notes">
+							<p>Chapters are the topmost elements and they always get metadata</p>
+						</aside>
+					</section>
+					
+					<section>
+						<h5>Explanation Metadata</h5>
+						
+						<pre class="xml stretch" style="font-size: 16pt">
+							<code data-trim data-noescape>&lt;answer&gt;
+    &lt;xhtml:section
+        property=&quot;ktp:explanation&quot;
+        typeof=&quot;ktp:Explanation&quot;
+        class=&quot;ktp-explanation&quot;&gt;
+        &lt;xhtml:section
+            property=&quot;ktp:explanation-section&quot;
+            typeof=&quot;ktp:feedback&quot;
+            class=&quot;ktp-explanation-section&quot;
+            data-title=&quot;Solution&quot;&gt;
+            ...
+        &lt;/xhtml:section&gt;
+    &lt;/xhtml:section&gt;
+&lt;/answer&gt;</code>
+						</pre>
+						
+						<aside class="notes">
+							<p>The solution (explanation) is marked up</p>
+						</aside>
+						
+					</section>
+					
+					<section>
+						<h5>Metadata Steps</h5>
+						
+						<pre class="xml stretch" style="font-size: 16pt">
+							<code data-trim data-noescape>&lt;group description=&quot;Add metadata&quot; xml:base=&quot;../xslt/db2html/&quot;&gt;
+    &lt;item
+        href=&quot;section-metadata.xsl&quot;
+        description=&quot;Add metadata to chapter/section&quot;/&gt;
+    &lt;item
+        href=&quot;webbook-metadata-insert.xsl&quot;
+        description=&quot;Insert web book metadata&quot;/&gt;
+    &lt;item
+        href=&quot;qandaentry-metadata-insert.xsl&quot;
+        description=&quot;Insert qandaentry metadata&quot;/&gt;
+    &lt;item
+        href=&quot;flashcard-wrappers.xsl&quot;
+        description=&quot;Wrap flashcard components in metadata sections&quot;/&gt;
+    &lt;item
+        href=&quot;question-options.xsl&quot;
+        description=&quot;Insert question option metadata&quot;/&gt;
+    &lt;item
+        href=&quot;question-stem.xsl&quot;
+        description=&quot;Insert question stem wrapper&quot;/&gt;
+    &lt;item
+        href=&quot;explanation-metadata.xsl&quot;
+        description=&quot;Wrap answer content in explanation metadata&quot;/&gt;
+&lt;/group&gt;</code>
+						</pre>
+						
+						<aside class="notes">
+							<p>7 steps, all in all</p>
+						</aside>
 					</section>
 					
 					<section>
 						<h5>Various Tweaks</h5>
+						
+						<ul>
+							<li>Footnotes</li>
+							<li>Xref labels</li>
+							<li>Some grouping</li>
+							<li>Image ref fixes</li>
+							<li>...</li>
+						</ul>
+						
+						<p class="fragment">But also...</p>
 						
 						<!-- Footnotes -->
 						<!-- xref labels -->
@@ -393,10 +558,93 @@ eacute?&gt;
 					<section>
 						<h5>Preconverting</h5>
 						
+						<pre class="xml stretch" style="font-size: 12pt">
+							<code data-trim data-noescape>&lt;question id=&quot;questionFEBB06-001&quot;&gt;
+    &lt;xhtml:section
+        class=&quot;ktp-question-stem&quot;
+        keep=&quot;true&quot;&gt;
+        &lt;para&gt;Four fair coins are tossed at once.
+            What is the probability of obtaining three heads and one tail?&lt;/para&gt;
+    &lt;/xhtml:section&gt;
+    &lt;orderedlist
+        numeration=&quot;upperalpha&quot;
+        inheritnum=&quot;ignore&quot;
+        continuation=&quot;restarts&quot;
+        class=&quot;ktp-answer-set&quot;&gt;
+        &lt;listitem
+            role=&quot;correct&quot;
+            property=&quot;ktp:answer&quot;
+            typeof=&quot;ktp:AnswerCorrect&quot;&gt;
+            &lt;para&gt;1/4&lt;/para&gt;
+        &lt;/listitem&gt;
+        &lt;listitem property=&quot;ktp:answer&quot; typeof=&quot;ktp:Answer&quot;&gt;
+            &lt;para&gt;3/8&lt;/para&gt;
+        &lt;/listitem&gt;
+        &lt;listitem property=&quot;ktp:answer&quot; typeof=&quot;ktp:Answer&quot;&gt;
+            &lt;para&gt;1/2&lt;/para&gt;
+        &lt;/listitem&gt;
+        &lt;listitem property=&quot;ktp:answer&quot; typeof=&quot;ktp:Answer&quot;&gt;
+            &lt;para&gt;3/4&lt;/para&gt;
+        &lt;/listitem&gt;
+    &lt;/orderedlist&gt;
+&lt;/question&gt;</code>
+						</pre>
+						
 						<!-- Turns out it's sometimes easier to preconvert -->
 						<!-- Some QA constructs requiring metadata alongside multiple-answer lists -->
 						<!-- Insert processing attr keep=true (current node but not descendants) -->
 						<!-- keep=copy (current node AND descendants) -->
+						
+						<aside class="notes">
+							<p>Sometimes it's just easier to preconvert some things</p>
+						</aside>
+					</section>
+					
+					<section>
+						<h5>Preconverting</h5>
+						
+						<pre class="stretch" style="font-size: 12pt">
+							<code class="xml" data-line-numbers="1-31|4|14|18|19|21" data-trim data-noescape>&lt;question id=&quot;questionFEBB06-001&quot;&gt;
+    &lt;xhtml:section
+        class=&quot;ktp-question-stem&quot;
+        keep=&quot;true&quot;&gt;
+        &lt;xhtml:p
+            keep=&quot;true&quot;&gt;Four fair coins are tossed at once.
+            What is the probability of obtaining three heads and one tail?&lt;/xhtml:p&gt;
+    &lt;/xhtml:section&gt;
+    &lt;xhtml:ol
+        numeration=&quot;upperalpha&quot;
+        inheritnum=&quot;ignore&quot;
+        continuation=&quot;restarts&quot;
+        class=&quot;ktp-answer-set&quot;
+        keep=&quot;true&quot;&gt;
+        &lt;xhtml:li
+            property=&quot;ktp:answer&quot;
+            typeof=&quot;ktp:AnswerCorrect&quot;
+            keep=&quot;true&quot;&gt;
+            &lt;xhtml:p keep=&quot;true&quot;&gt;1/4&lt;/xhtml:p&gt;
+        &lt;/xhtml:li&gt;
+        &lt;xhtml:li property=&quot;ktp:answer&quot; typeof=&quot;ktp:Answer&quot; keep=&quot;true&quot;&gt;
+            &lt;xhtml:p keep=&quot;true&quot;&gt;3/8&lt;/xhtml:p&gt;
+        &lt;/xhtml:li&gt;
+        &lt;xhtml:li property=&quot;ktp:answer&quot; typeof=&quot;ktp:Answer&quot; keep=&quot;true&quot;&gt;
+            &lt;xhtml:p keep=&quot;true&quot;&gt;1/2&lt;/xhtml:p&gt;
+        &lt;/xhtml:li&gt;
+        &lt;xhtml:li property=&quot;ktp:answer&quot; typeof=&quot;ktp:Answer&quot; keep=&quot;true&quot;&gt;
+            &lt;xhtml:p keep=&quot;true&quot;&gt;3/4&lt;/xhtml:p&gt;
+        &lt;/xhtml:li&gt;
+    &lt;/xhtml:ol&gt;
+&lt;/question&gt;</code>
+						</pre>
+						
+						<!-- Turns out it's sometimes easier to preconvert -->
+						<!-- Some QA constructs requiring metadata alongside multiple-answer lists -->
+						<!-- Insert processing attr keep=true (current node but not descendants) -->
+						<!-- keep=copy (current node AND descendants) -->
+						
+						<aside class="notes">
+							<p>Sometimes it's just easier to preconvert some things</p>
+						</aside>
 					</section>
 					
 					<section>
