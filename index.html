@@ -648,17 +648,66 @@ eacute?&gt;
 					</section>
 					
 					<section>
-						<h5>For example...</h5>
+						<h5>Since We're Already Tweaking Stuff...</h5>
+						
+						<pre class="xml" style="font-size: 14pt">
+							<code data-trim data-noescape>&lt;para&gt;See &lt;xhtml:a keep=&quot;true&quot; href=&quot;#ideq&quot;&gt;Equation 45.1&lt;/xhtml:a&gt;&lt;/para&gt;</code>
+						</pre>
+						
+						<pre class="xml fragment" style="font-size: 14pt">
+							<code data-trim data-noescape>&lt;xhtml:section class=&quot;footnotes&quot; id=&quot;footnotes&quot; keep=&quot;true&quot;&gt;
+    &lt;xhtml:a name=&quot;footnotes&quot; keep=&quot;true&quot;/&gt;
+    &lt;xhtml:h6 keep=&quot;true&quot;&gt;Footnotes&lt;/xhtml:h6&gt;
+    &lt;xhtml:ol keep=&quot;true&quot;&gt;
+        &lt;xhtml:li id=&quot;fn-15-1&quot; keep=&quot;true&quot;&gt;
+            &lt;para&gt;with a footnote&lt;/para&gt;
+        &lt;/xhtml:li&gt;
+    &lt;/xhtml:ol&gt;
+&lt;/xhtml:section&gt;</code>
+						</pre>
 						
 						<!-- Examples where pre-convert makes sense -->
+						<aside class="notes">
+							<p>Note keep=true</p>
+						</aside>
+					</section>
+					
+					<section>
+						<h5>It Became a Habit</h5>
+						
+						<pre class="xml">
+							<code data-trim data-noescape>keep="true"</code>
+						</pre>
+						
+						<pre class="xml fragment">
+							<code data-trim data-noescape>keep="copy"</code>
+						</pre>
+						
+						<aside class="notes">
+							<p>Keep current node as-is</p>
+							<p>Keep current node and all descendants as-is</p>
+						</aside>
 					</section>
 					
 					<section>
 						<h5>Output</h5>
 						
+						<ul>
+							<li class="fragment">XSLT pipeline output is a normalised DocBook-is file</li>
+							<li class="fragment">
+								<p>Split into fragments based on <code>split="true"</code></p>
+								<p>Filename determined during preprocess</p>
+							</li>
+						</ul>
+						
 						<!-- The preprocessing XSLT manifest's output is a normalised DocBook-ish file -->
 						<!-- That is split into fragments based on the initial preprocessing -->
 						<!-- Fragments were also named during preprocessing (extra attrs) -->
+						
+						<aside class="notes">
+							<p>Basic XSLT transform, everything decided during preprocess</p>
+							<p>All that was remaining now was the HTML conversion, right?</p>
+						</aside>
 					</section>
 				</section>
 				
@@ -672,13 +721,25 @@ eacute?&gt;
 					<section>
 						<h5>In Theory</h5>
 						
-						<!-- Create an entry XSLT and link to docbook.xsl -->
-						<!-- Do your tweaks in the entry module -->
-						<!-- Run against the split output -->
+						<p>xslTNG:</p>
+						<ol>
+							<li>Entry XSLT importing <code>docbook.xsl</code></li>
+							<li>Entry module tweaks</li>
+							<li>Run against split output</li>
+						</ol>
 					</section>
 					
 					<section>
 						<h5>In Practice</h5>
+						
+						<ul>
+							<li class="fragment">xslTNG input lives in a namespace, DB 4.3 does not</li>
+							<li class="fragment">
+								<p>xslTNG produces a default output</p>
+								<p>Endlessly customisable, not always obviously so</p>
+							</li>
+							<li class="fragment">More preconvert tweaks</li>
+						</ul>
 						
 						<!-- DB 4.3 doesn't live in a namespace but the expected xslTNG input does -->
 						<!-- xslTNG produces a default output -->
@@ -688,6 +749,15 @@ eacute?&gt;
 					
 					<section>
 						<h5>But Also</h5>
+						
+						<ul>
+							<li>
+								<p>Post-xslTNG required additional tweaks</p>
+								<p>(such as: HTML wrappers went missing and I couldn't understand why)</p>
+							</li>
+							<li>A precovert/postprocess combo became easier (and easier)</li>
+							<li>Late-breaking tweaks from the client easier to do in postprocess</li>
+						</ul>
 						
 						<!-- Post-xslTNG files needed a few tweaks -->
 						<!-- HTML wrappers sometimes went missing and I couldn't understand why -->
