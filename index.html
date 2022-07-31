@@ -15,7 +15,8 @@
 		<link rel="stylesheet" href="dist/theme/black.css">-->
 
 		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+		<!--<link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">-->
+		<link rel="stylesheet" href="../reveal.js/plugin/highlight/stackoverflow-dark.css">
 	</head>
 	<body>
 		<div class="reveal">
@@ -34,36 +35,20 @@
 				<!-- Intro -->
 				<section>
 					<section>
-						<h3>Intro</h3>
+						<h3>This Should Be Easy</h3>
 						
 						<img src="img/docbook-logo.png" alt="DocBook logo"/>
-						
-						<aside class="notes">
-							<p></p>
-						</aside>
-					</section>
-					
-					<section>
-						<h5>This Should Be Easy...</h5>
 						
 						<ol>
 							<li>Clean up and convert DocBook 4.0 to 4.3</li>
 							<li>Convert the DocBook 4.3 to (X)HTML</li>
 						</ol>
 						
+						<p class="fragment"><q>Pipelines!</q></p>
+						
 						<aside class="notes">
 							<p><q>Pipelines!</q></p>
 						</aside>
-					</section>
-					
-					<section>
-						<h5>Sources</h5>
-						
-						<!-- A few points about DB4.0, XIncludes, etc -->
-						<!-- Books of varying sizes -->
-						<!-- Some reference works, some diagnostic tess -->
-						<!-- Split into fragments down to Q&A level -->
-						<!-- "Bursted" XIncludes -->
 					</section>
 					
 					<section>
@@ -86,8 +71,8 @@
 						<h5>Pipelines?</h5>
 						
 						<!-- XSLT manifest example -->
-						<pre class="xml">
-							<code data-trim data-noescape><?xml version="1.0" encoding="UTF-8"?>
+						<pre class="stretch">
+							<code class="xml" data-trim data-noescape><?xml version="1.0" encoding="UTF-8"?>
 &lt;manifest
     xmlns=&quot;http://www.corbas.co.uk/ns/transforms/manifest&quot;
     xml:base=&quot;.&quot;&gt;
@@ -155,17 +140,15 @@
 							<code data-trim data-noescape>&lt;xi:include href="section1.xml"/></code>
 						</pre>
 						
-						<p>List XInclude targets in an exclude filter:</p>
-						<pre class="xml">
-							<code data-trim data-noescape>&lt;p:option
-    name=&quot;exclude-filter&quot;
-    select=&quot;&apos;(section1.xml|section2.xml|section3.xml)&apos;&quot;/&gt;</code>
-						</pre>
-						
-						<!-- Pull in XInclude targets -->
-						<!-- List all XInclude targets -->
-						<!-- Add those to exclude filter (to not process them once pulled in) -->
-						<!-- Here's where I spotted the first issue -->
+						<div class="fragment">
+							<p>List XInclude targets in an exclude filter:</p>
+							<pre class="xml">
+								<code data-trim data-noescape>&lt;p:option
+	    name=&quot;exclude-filter&quot;
+	    select=&quot;&apos;(section1.xml|section2.xml|section3.xml)&apos;&quot;/&gt;</code>
+							</pre>
+							<p>(Don't process fragments already pulled in)</p>
+						</div>
 						
 						<aside class="notes">
 							<p>exclude-filter to not continue processing normalised XInclude fragments</p>
@@ -189,8 +172,8 @@
 					<section>
 						<h5>File Naming</h5>
 						
-						<pre class="xml">
-							<code data-trim data-noescape>01234.xml
+						<pre>
+							<code class="xml" data-trim data-noescape>01234.xml
 My filename.xml
 Multiple   whitespaces  in filenames.xml
 Ampersands? Yes & No.xml
@@ -215,12 +198,20 @@ Square brackets [2].xml
 					<section>
 						<h5>File Renaming Step</h5>
 						
-						<pre class="xml">
-							<code data-trim data-noescape>&lt;sg:rename name=&quot;rename&quot;&gt;
-    &lt;p:with-option name=&quot;input-dir&quot; select=&quot;$input-base-uri&quot;/&gt;
-    &lt;p:with-option name=&quot;output-dir&quot; select=&quot;concat($tmp-dir,&apos;/names-fixed&apos;)&quot;/&gt;
-    &lt;p:with-option name=&quot;reports-dir&quot; select=&quot;$reports-dir&quot;/&gt;
-    &lt;p:with-option name=&quot;tmp-dir&quot; select=&quot;$tmp-dir&quot;/&gt;
+						<pre class="stretch">
+							<code class="xml" data-trim data-noescape>&lt;sg:rename name=&quot;rename&quot;&gt;
+    &lt;p:with-option
+        name=&quot;input-dir&quot;
+        select=&quot;$input-base-uri&quot;/&gt;
+    &lt;p:with-option
+        name=&quot;output-dir&quot;
+        select=&quot;concat($tmp-dir,&apos;/names-fixed&apos;)&quot;/&gt;
+    &lt;p:with-option
+        name=&quot;reports-dir&quot;
+        select=&quot;$reports-dir&quot;/&gt;
+    &lt;p:with-option
+        name=&quot;tmp-dir&quot;
+        select=&quot;$tmp-dir&quot;/&gt;
 &lt;/sg:rename&gt;</code>
 						</pre>
 						
@@ -251,7 +242,8 @@ Square brackets [2].xml
 						
 						<p>Provided we have...</p>
 						<pre class="xml">
-							<code data-trim data-noescape>&lt;!DOCTYPE set PUBLIC &quot;-//Arbortext//DTD DocBook XML V4.0 + MathML//EN&quot;
+							<code data-trim data-noescape>&lt;!DOCTYPE set
+ PUBLIC &quot;-//Arbortext//DTD DocBook XML V4.0 + MathML//EN&quot;
  &quot;axdocbook_math.dtd&quot;&gt;</code>
 						</pre>
 						
@@ -266,8 +258,8 @@ Square brackets [2].xml
 						
 						<!-- Code examples with outcommented DOCTYPEs -->
 						
-						<pre class="xml">
-							<code data-trim data-noescape>&lt;!-- Fragment document type declaration subset:
+						<pre style="font-size: 15pt">
+							<code class="xml" data-trim data-noescape>&lt;!-- Fragment document type declaration subset:
 Arbortext, Inc., 1988-2017, v.4002
 &lt;!DOCTYPE set PUBLIC &quot;-//Arbortext//DTD DocBook XML V4.0 + MathML//EN&quot;
  &quot;axdocbook_math.dtd&quot;&gt;
@@ -304,7 +296,7 @@ eacute?&gt;
 					<section>
 						<h5>Add DOCTYPE</h5>
 						
-						<pre class="xml">
+						<pre class="xml" style="font-size: 12pt">
 							<code data-trim data-noescape>&lt;java
     jar=&quot;lib/tagsoup-1.2.1.jar&quot;
     fork=&quot;true&quot;
@@ -715,7 +707,7 @@ eacute?&gt;
 				<!-- xslTNG -->
 				<section>
 					<section>
-						<h3>xslTNG</h3>
+						<h3 style="text-transform: none;">xslTNG</h3>
 					</section>
 					
 					<section>
@@ -770,17 +762,25 @@ eacute?&gt;
 				<!-- Closing -->
 				<section>
 					<section>
-						<h3></h3>
-					</section>
-					
-					<section>
-						<h5></h5>
+						<h3>All in All...</h3>
+						
+						<ul>
+							<li class="fragment">I should have done XProc 3.0</li>
+							<li class="fragment">Maybe xslTNG was overkill...?</li>
+							<li class="fragment">Debugging is easy!</li>
+							<li class="fragment">New features are easy!</li>
+						</ul>
 						
 						<aside class="notes">
+							<p>XProc 3.0 would have allowe me to skip Ant</p>
+							<p>xslTNG took a while to get into; not always obvious</p>
+							<p>On the other hand...</p>
 						</aside>
 					</section>
 					
-					
+					<section>
+						<h5>Back to Jean</h5>
+					</section>
 				</section>
 				
 				
